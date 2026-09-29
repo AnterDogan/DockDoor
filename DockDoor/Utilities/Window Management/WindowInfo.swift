@@ -28,6 +28,8 @@ struct WindowInfo: Identifiable, Hashable {
     var isMinimized: Bool
     var isHidden: Bool
     private(set) var isWindowlessApp: Bool
+    /// Left and right member of a synthetic snap group entry; empty for real windows.
+    var snapGroupMembers: [WindowInfo] = []
 
     private var _scWindow: SCWindow?
 
@@ -54,6 +56,8 @@ struct WindowInfo: Identifiable, Hashable {
     }
 
     var scWindow: SCWindow? { _scWindow }
+
+    var isSnapGroup: Bool { !snapGroupMembers.isEmpty }
 
     func hash(into hasher: inout Hasher) {
         hasher.combine(id)
@@ -115,9 +119,53 @@ extension WindowInfo {
         return info
     }
 
+    /// One entry standing in for a left/right snap pair. It borrows `primary`'s app and AX
+    /// identity so per-app gating keeps working; activation and minimize act on both members.
+    static func snapGroupEntry(left: WindowInfo, right: WindowInfo, primary: WindowInfo) -> WindowInfo {
+        let title = SnapGroups.title(left: left, right: right)
+        let provider = MockPreviewWindow(
+            windowID: SnapGroups.syntheticID(left: left.id, right: right.id),
+            frame: left.frame.union(right.frame),
+            title: title,
+            owningApplicationBundleIdentifier: primary.app.bundleIdentifier,
+            owningApplicationProcessID: primary.app.processIdentifier,
+            isOnScreen: true,
+            windowLayer: 0
+        )
+        var info = WindowInfo(
+            windowProvider: provider,
+            app: primary.app,
+            ownerApp: primary.ownerApp,
+            image: SnapGroups.compositeImage(for: left, right: right),
+            axElement: primary.axElement,
+            appAxElement: primary.appAxElement,
+            closeButton: nil,
+            lastAccessedTime: max(left.lastAccessedTime, right.lastAccessedTime),
+            creationTime: min(left.creationTime, right.creationTime),
+            imageCapturedTime: min(left.imageCapturedTime, right.imageCapturedTime),
+            spaceID: primary.spaceID,
+            screenIdentifier: primary.screenIdentifier,
+            isMinimized: false,
+            isHidden: false
+        )
+        info.windowName = title
+        info.snapGroupMembers = [left, right]
+        return info
+    }
+
     @discardableResult
     mutating func toggleMinimize() -> Bool? {
         guard !isWindowlessApp else { return nil }
+        if isSnapGroup {
+            var result: Bool?
+            for index in snapGroupMembers.indices {
+                if let toggled = snapGroupMembers[index].toggleMinimize() {
+                    result = toggled
+                }
+            }
+            if let result { isMinimized = result }
+            return result
+        }
         if isMinimized {
             if app.isHidden {
                 app.unhide()
@@ -432,6 +480,15 @@ extension WindowInfo {
     func bringToFront() {
         guard !isWindowlessApp else {
             app.activate(options: [.activateIgnoringOtherApps])
+            return
+        }
+        if isSnapGroup {
+            // Raise the partner first so the member owned by the hovered app ends up key.
+            let own = snapGroupMembers.filter { $0.axElement == axElement }
+            let others = snapGroupMembers.filter { $0.axElement != axElement }
+            for member in others + own {
+                member.bringToFront()
+            }
             return
         }
         let maxRetries = 3

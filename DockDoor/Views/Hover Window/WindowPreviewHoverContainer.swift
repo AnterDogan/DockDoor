@@ -392,7 +392,7 @@ struct WindowPreviewHoverContainer: View {
     private func handleWindowDrop(at location: CGPoint, for index: Int) {
         guard index < previewStateCoordinator.windows.count else { return }
         let window = previewStateCoordinator.windows[index]
-        guard !window.isWindowlessApp else { return }
+        guard !window.isWindowlessApp, !window.isSnapGroup else { return }
 
         let currentScreen = NSScreen.screenFromQuartzPoint(location)
         let globalLocation = DockObserver.cgPointFromNSPoint(location, forScreen: currentScreen)
@@ -1120,6 +1120,9 @@ struct WindowPreviewHoverContainer: View {
             let useLivePreview: Bool = {
                 if mockPreviewActive { return false }
 
+                // A snap group has no window of its own to stream; it shows the composite thumbnail.
+                if windowInfo.isSnapGroup { return false }
+
                 // Check global and context-specific settings
                 let windowSwitcherActive = previewStateCoordinator.windowSwitcherActive
                 let livePreviewEnabledForContext = windowSwitcherActive ? enableLivePreviewForWindowSwitcher : enableLivePreviewForDock
@@ -1214,6 +1217,7 @@ struct WindowPreviewHoverContainer: View {
                 .gesture(
                     DragGesture(minimumDistance: 3, coordinateSpace: .global)
                         .onChanged { value in
+                            guard !windowInfo.isSnapGroup else { return }
                             if draggedWindowIndex == nil {
                                 draggedWindowIndex = index
                                 isDragging = true

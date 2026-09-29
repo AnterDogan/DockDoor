@@ -201,7 +201,7 @@ extension DockObserver {
                         windows = windows.filter { !$0.isHidden && !$0.isMinimized }
                     }
 
-                    let freshWindows = windows
+                    let freshWindows = SnapGroups.appendingGroupEntries(to: windows)
 
                     await MainActor.run { [weak self] in
                         guard let self else { return }

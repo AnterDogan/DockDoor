@@ -156,6 +156,8 @@ private class WindowSwitchingCoordinator {
             windows = WindowUtil.groupWindowsByApp(windows)
         }
 
+        windows = SnapGroups.appendingGroupEntries(to: windows)
+
         if !filterByApp, Defaults[.showWindowlessAppsInSwitcher] {
             windows.append(contentsOf: WindowUtil.getWindowlessRunningApps(existingWindows: windowsForWindowlessDetection))
         }

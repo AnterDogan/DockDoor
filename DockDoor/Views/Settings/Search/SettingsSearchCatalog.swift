@@ -200,6 +200,15 @@ enum SettingsSearchCatalog {
             icon: "square.on.square"
         ),
         SettingsSearchItem(
+            id: "dockPreviews.snapGroups",
+            title: String(localized: "Show snap groups"),
+            description: String(localized: "When two windows are tiled side by side, add one preview showing both that brings both to the front, like Windows 11 snap groups. Also applies to the window switcher."),
+            keywords: ["snap", "group", "groups", "tile", "tiling", "split", "half", "windows 11", "pair"],
+            tab: "DockPreviews",
+            section: String(localized: "Window Display"),
+            icon: "rectangle.split.2x1"
+        ),
+        SettingsSearchItem(
             id: "dockPreviews.ignoreSingleWindow",
             title: String(localized: "Ignore apps with one window"),
             description: String(localized: "Prevents apps that only ever have a single window from appearing in previews."),

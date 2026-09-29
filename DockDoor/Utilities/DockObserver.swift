@@ -389,6 +389,8 @@ final class DockObserver {
             cachedWindows = cachedWindows.filter { !$0.isHidden && !$0.isMinimized }
         }
 
+        cachedWindows = SnapGroups.appendingGroupEntries(to: cachedWindows)
+
         let mouseScreen = NSScreen.screenFromQuartzPoint(currentMouseLocation)
         let convertedMouseLocation = DockObserver.nsPointFromCGPoint(currentMouseLocation, forScreen: mouseScreen)
         let screenOrigin = mouseScreen.frame.origin
@@ -441,7 +443,7 @@ final class DockObserver {
                     windows = windows.filter { !$0.isHidden && !$0.isMinimized }
                 }
 
-                let freshWindows = windows
+                let freshWindows = SnapGroups.appendingGroupEntries(to: windows)
 
                 await MainActor.run { [weak self] in
                     guard let self else { return }
@@ -1083,7 +1085,7 @@ final class DockObserver {
             }
 
             do {
-                let windows = try await WindowUtil.getActiveWindows(of: app)
+                let windows = try await SnapGroups.appendingGroupEntries(to: WindowUtil.getActiveWindows(of: app))
                 let mouseScreen = NSScreen.screenFromQuartzPoint(currentMouseLocation)
                 let convertedMouseLocation = DockObserver.nsPointFromCGPoint(currentMouseLocation, forScreen: mouseScreen)
 

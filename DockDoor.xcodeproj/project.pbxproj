@@ -212,6 +212,8 @@
 		EE170699DAA44638A41F52048707488C /* SettingsSearchEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2C876FFD01A4267862BF125EA617987 /* SettingsSearchEngine.swift */; };
 		F0796B6D96ED42D58D75BB8A /* SettingsSliderRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0970FA03935B41E59919A618 /* SettingsSliderRow.swift */; };
 		F1F4D845DBF89A1AA7266945 /* NativeTabGrouping.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3DF9E4E1388ECA326113A84 /* NativeTabGrouping.swift */; };
+		C64E88AF40C14F0E8ADB07A4 /* SnapGroups.swift in Sources */ = {isa = PBXBuildFile; fileRef = 711A070BF06B4B199FCF11B2 /* SnapGroups.swift */; };
+		90DF0520ED4A47A9B02AE578 /* SnapGroupsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7672A9696DE4DDCBF16164F /* SnapGroupsTests.swift */; };
 		F3A2B8C1D5E6489AAB123456 /* ActiveAppIndicatorPositioning.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B7C6D5E4F3A2B1098765432 /* ActiveAppIndicatorPositioning.swift */; };
 		FCBBC228D4CD4709BB381A80A93F3406 /* FolderWidgetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBECBD93A13645B2A46E546AC58BD1A4 /* FolderWidgetView.swift */; };
 		FEBF808E6ABA4DE7983FCACD /* SettingsPickerRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C341C31333F4619A4E79449 /* SettingsPickerRow.swift */; };
@@ -293,6 +295,8 @@
 		9DE26FD426284948A71EBACC /* SettingsIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsIcon.swift; sourceTree = "<group>"; };
 		A2C876FFD01A4267862BF125EA617987 /* SettingsSearchEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsSearchEngine.swift; sourceTree = "<group>"; };
 		A3DF9E4E1388ECA326113A84 /* NativeTabGrouping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeTabGrouping.swift; sourceTree = "<group>"; };
+		711A070BF06B4B199FCF11B2 /* SnapGroups.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapGroups.swift; sourceTree = "<group>"; };
+		A7672A9696DE4DDCBF16164F /* SnapGroupsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapGroupsTests.swift; sourceTree = "<group>"; };
 		A4E8BB47686D4EF6B89131D2EB26FEE8 /* DockDoor.sdef */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.sdef; path = DockDoor.sdef; sourceTree = "<group>"; };
 		A63C0725F7FB46D3B6850352B3493FA8 /* SettingsSearchTargetModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsSearchTargetModifier.swift; sourceTree = "<group>"; };
 		A669E7D8E433434AB00E292C6BC49062 /* SettingsSearchCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsSearchCatalog.swift; sourceTree = "<group>"; };
@@ -624,6 +628,7 @@
 			children = (
 				AA11001122334455AA110055 /* DockLockerGeometryTests.swift */,
 				D00D4B366E3CF5338182E065 /* NativeTabGroupingTests.swift */,
+				A7672A9696DE4DDCBF16164F /* SnapGroupsTests.swift */,
 			);
 			path = DockDoorTests;
 			sourceTree = "<group>";
@@ -922,6 +927,7 @@
 				BB49747D2F01AB0100308326 /* WindowOrderPersistence.swift */,
 				BBB023AC2EDCCB9100317CF4 /* WindowInfo.swift */,
 				A3DF9E4E1388ECA326113A84 /* NativeTabGrouping.swift */,
+				711A070BF06B4B199FCF11B2 /* SnapGroups.swift */,
 				3A1622972C8BF71000D318EE /* SwiftUIWindow.swift */,
 				BB2CBB082C48128D004502C5 /* SpaceWindowCacheManager.swift */,
 				BB7CA33C2C31F1B00012E303 /* WindowManipulationObservers.swift */,
@@ -1120,6 +1126,7 @@
 			files = (
 				AA11001122334455AA110066 /* DockLockerGeometryTests.swift in Sources */,
 				555110B7F7B99C7BD510DBC7 /* NativeTabGroupingTests.swift in Sources */,
+				90DF0520ED4A47A9B02AE578 /* SnapGroupsTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1194,6 +1201,7 @@
 				BB3968022C2A6CC2004F1AB6 /* Marquee.swift in Sources */,
 				BBB023AD2EDCCB9100317CF4 /* WindowInfo.swift in Sources */,
 				F1F4D845DBF89A1AA7266945 /* NativeTabGrouping.swift in Sources */,
+				C64E88AF40C14F0E8ADB07A4 /* SnapGroups.swift in Sources */,
 				BB709B3D2EF21E9E007809A2 /* VolumeScrollModifier.swift in Sources */,
 				BB0440602C77AD2C009F1D33 /* CodableColor.swift in Sources */,
 				BB52EDF02C5BEFE3006A64A4 /* HiddenModifier.swift in Sources */,

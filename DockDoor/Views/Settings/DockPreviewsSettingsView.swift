@@ -9,6 +9,7 @@ struct DockPreviewsSettingsView: View {
     @Default(.keepPreviewOnAppTerminate) var keepPreviewOnAppTerminate
     @Default(.groupAppInstancesInDock) var groupAppInstancesInDock
     @Default(.collapseNativeTabsIntoSingleWindow) var collapseNativeTabsIntoSingleWindow
+    @Default(.showSnapGroups) var showSnapGroups
     @Default(.includeHiddenWindowsInDockPreview) var includeHiddenWindowsInDockPreview
     @Default(.showWindowlessAppsInDockPreview) var showWindowlessAppsInDockPreview
     @Default(.dockPreviewActivationMode) var dockPreviewActivationMode
@@ -117,6 +118,13 @@ struct DockPreviewsSettingsView: View {
                 Toggle(isOn: $collapseNativeTabsIntoSingleWindow) { Text("Collapse native tabs into a single window") }
                     .settingsSearchTarget("dockPreviews.collapseNativeTabs")
                 Text("Show one preview for apps that use native macOS window tabs (e.g. Ghostty, Finder, Terminal) instead of one preview per tab. Restart the app for this to take effect.")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .padding(.leading, 20)
+
+                Toggle(isOn: $showSnapGroups) { Text("Show snap groups") }
+                    .settingsSearchTarget("dockPreviews.snapGroups")
+                Text("When two windows are tiled side by side, add one preview showing both that brings both to the front, like Windows 11 snap groups. Also applies to the window switcher.")
                     .font(.caption)
                     .foregroundColor(.secondary)
                     .padding(.leading, 20)
