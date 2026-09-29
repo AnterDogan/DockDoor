@@ -15,6 +15,11 @@ cd "$(dirname "$0")"
 IDENTITY="${IDENTITY:-SnapAssist Dev}"
 DERIVED="build/DerivedData"
 
+# Ohne sudo xcode-select: Xcode direkt ansprechen.
+if [ -d /Applications/Xcode.app/Contents/Developer ]; then
+  export DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer
+fi
+
 if ! xcodebuild -version >/dev/null 2>&1; then
   echo "Xcode fehlt oder ist nicht ausgewählt (xcode-select). Abbruch." >&2
   exit 1
@@ -31,7 +36,6 @@ xcodebuild -project DockDoor.xcodeproj -scheme DockDoor -configuration Release \
   -destination 'platform=macOS' \
   CODE_SIGN_STYLE=Manual \
   CODE_SIGN_IDENTITY="$IDENTITY" \
-  "CODE_SIGN_IDENTITY[sdk=macosx*]=$IDENTITY" \
   DEVELOPMENT_TEAM="" \
   PROVISIONING_PROFILE_SPECIFIER="" \
   build | tail -40
