@@ -117,7 +117,8 @@ enum DockDoorCommands {
 
         Task { @MainActor in
             guard let coordinator = SharedPreviewWindowCoordinator.activeInstance else { return }
-            guard let windows = try? await WindowUtil.getActiveWindows(of: app, context: .dockPreview) else { return }
+            guard let activeWindows = try? await WindowUtil.getActiveWindows(of: app, context: .dockPreview) else { return }
+            let windows = SnapGroups.appendingGroupEntries(to: activeWindows)
 
             let mouseLocation = position ?? NSEvent.mouseLocation
             let screen = NSScreen.screenFromQuartzPoint(mouseLocation)

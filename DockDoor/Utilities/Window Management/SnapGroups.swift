@@ -124,15 +124,21 @@ enum SnapGroups {
         }
 
         var result = windows.filter { !$0.isSnapGroup }
+        var appended = 0
         for pair in pairs {
             let localLeft = byID[pair.left.id]
             let localRight = byID[pair.right.id]
-            guard let primary = localLeft ?? localRight,
-                  let left = localLeft ?? cachedWindow(pair.left),
+            guard let primary = localLeft ?? localRight else { continue }
+            guard let left = localLeft ?? cachedWindow(pair.left),
                   let right = localRight ?? cachedWindow(pair.right)
-            else { continue }
+            else {
+                DebugLogger.log("SnapGroups", details: "pair \(pair.left.id)/\(pair.right.id): partner not in cache")
+                continue
+            }
             result.append(WindowInfo.snapGroupEntry(left: left, right: right, primary: primary))
+            appended += 1
         }
+        DebugLogger.log("SnapGroups", details: "pairs on screen: \(pairs.count), groups appended: \(appended), windows: \(windows.count)")
         return result
     }
 
