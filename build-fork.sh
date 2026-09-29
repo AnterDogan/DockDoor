@@ -45,5 +45,11 @@ APP="$DERIVED/Build/Products/Release/DockDoor.app"
 
 rm -rf build/DockDoor.app
 cp -R "$APP" build/DockDoor.app
+
+# Sparkle kommt vorsigniert (fremde Team-ID), und ein selbstsigniertes Zertifikat
+# hat gar keine Team-ID: mit Hardened Runtime verweigert dyld dann jedes
+# eingebettete Framework. Deshalb alles nachsignieren, ohne Hardened Runtime.
+codesign --force --deep --preserve-metadata=entitlements \
+  --sign "$IDENTITY" build/DockDoor.app
 codesign --verify --deep --strict build/DockDoor.app
 echo "OK: build/DockDoor.app"

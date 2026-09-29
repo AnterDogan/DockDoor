@@ -24,14 +24,15 @@ wegbewegt wird.
 
 ## Bauen
 
-Der Code ist ohne Xcode geschrieben und nur geparst, nicht kompiliert. Erster
-Build kann Tippfehler zeigen.
+Stand 2026-09-29: baut mit Xcode 27.0 fehlerfrei, alle SnapGroups-Tests grün,
+installiert als /Applications/DockDoor.app (Brew-Cask deinstalliert).
 
 ```
-sudo xcode-select -s /Applications/Xcode.app
-sudo xcodebuild -license accept
 ./install-fork.sh        # baut, ersetzt /Applications/DockDoor.app, startet neu
 ```
+
+Die Skripte setzen `DEVELOPER_DIR` selbst, `xcode-select` mit sudo ist nicht
+nötig. Die Xcode-Lizenz muss einmal über Xcode.app akzeptiert sein.
 
 Beim ersten Build lädt Xcode die SPM-Abhängigkeiten (swift-syntax ist groß).
 Tests: in Xcode Cmd+U oder
