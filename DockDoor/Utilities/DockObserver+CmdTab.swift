@@ -140,6 +140,8 @@ extension DockObserver {
             cachedWindows = cachedWindows.filter { !$0.isHidden && !$0.isMinimized }
         }
 
+        cachedWindows = SnapGroups.appendingGroupEntries(to: cachedWindows)
+
         let elementPos = try? selectedItem.element.position()
         let bestScreen = if let elementPos { NSScreen.screenFromQuartzPoint(elementPos) } else { NSScreen.main! }
 
