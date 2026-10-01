@@ -593,29 +593,11 @@ struct WindowPreview: View, Equatable {
             }
         }
 
-        func memberIcon(_ member: WindowInfo) -> some View {
-            Group {
-                if let icon = member.app.icon {
-                    Image(nsImage: icon)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: appIconSize, height: appIconSize)
-                }
-            }
-        }
-
-        // Snap group: the left member's icon sits at the left edge and the right member's at the
-        // right edge, mirroring where the windows are; the group name goes in between.
+        // Snap group: the composite image already badges each window with its app icon,
+        // so the header carries only the group name.
         let headerContent = Group {
-            if windowInfo.isSnapGroup, windowInfo.snapGroupMembers.count == 2 {
-                HStack(spacing: 4) {
-                    memberIcon(windowInfo.snapGroupMembers[0])
-                    Spacer(minLength: 4)
-                    titleAndSubtitleContent
-                    Spacer(minLength: 4)
-                    memberIcon(windowInfo.snapGroupMembers[1])
-                }
-                .frame(maxWidth: .infinity)
+            if windowInfo.isSnapGroup {
+                titleAndSubtitleContent
             } else {
                 appIconContent
                 titleAndSubtitleContent
