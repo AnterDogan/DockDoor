@@ -563,12 +563,15 @@ struct WindowPreview: View, Equatable {
         let windowTitle = windowInfo.windowName
         let hasWindowTitleLabel = shouldShowWindowTitle &&
             windowTitle?.isEmpty == false &&
-            windowTitle != windowInfo.app.localizedName
+            windowTitle != windowInfo.app.localizedName &&
+            !windowInfo.isSnapGroup
         let appIconSize = switcherAppIconSize(hasSecondaryLabel: hasWindowTitleLabel)
+        // A snap group is named after both members, not after the app that owns the entry.
+        let headerName = windowInfo.isSnapGroup ? (windowInfo.windowName ?? "") : (windowInfo.app.localizedName ?? "Unknown")
 
         let titleAndSubtitleContent = VStack(alignment: .leading, spacing: 0) {
             if !showAppIconOnly {
-                Text(windowInfo.app.localizedName ?? "Unknown")
+                Text(headerName)
                     .foregroundStyle(.primary)
                     .lineLimit(1)
             }
@@ -582,7 +585,18 @@ struct WindowPreview: View, Equatable {
         .padding(.trailing, 8)
 
         let appIconContent = Group {
-            if let appIcon = windowInfo.app.icon {
+            if windowInfo.isSnapGroup {
+                HStack(spacing: 2) {
+                    ForEach(Array(windowInfo.snapGroupMembers.enumerated()), id: \.offset) { _, member in
+                        if let icon = member.app.icon {
+                            Image(nsImage: icon)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: appIconSize, height: appIconSize)
+                        }
+                    }
+                }
+            } else if let appIcon = windowInfo.app.icon {
                 Image(nsImage: appIcon)
                     .resizable()
                     .scaledToFit()

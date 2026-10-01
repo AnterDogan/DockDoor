@@ -36,7 +36,9 @@ enum SnapGroups {
     /// Same slack as Snap Assist so both agree on what counts as "exactly one half".
     static let tolerance: CGFloat = 12
 
-    /// Pairs the frontmost left-half window with the frontmost right-half window of every screen.
+    /// Pairs left-half and right-half windows of every screen by z-order rank: the frontmost
+    /// left window with the frontmost right window, the second with the second, and so on,
+    /// so several stacked pairs each form their own group.
     /// `candidates` must be in z-order (front first); `screens` are visible frames in CG coordinates.
     static func pairs(in candidates: [Candidate], screens: [CGRect]) -> [Pair] {
         var pairs: [Pair] = []
@@ -47,13 +49,14 @@ enum SnapGroups {
             let leftHalf = CGRect(x: screen.minX, y: screen.minY, width: halfWidth, height: screen.height)
             let rightHalf = CGRect(x: screen.minX + halfWidth, y: screen.minY, width: screen.width - halfWidth, height: screen.height)
 
-            guard let left = candidates.first(where: { !used.contains($0.id) && matches($0.frame, leftHalf) }),
-                  let right = candidates.first(where: { !used.contains($0.id) && $0.id != left.id && matches($0.frame, rightHalf) })
-            else { continue }
+            let lefts = candidates.filter { !used.contains($0.id) && matches($0.frame, leftHalf) }
+            let rights = candidates.filter { !used.contains($0.id) && matches($0.frame, rightHalf) }
 
-            used.insert(left.id)
-            used.insert(right.id)
-            pairs.append(Pair(left: Member(id: left.id, pid: left.pid), right: Member(id: right.id, pid: right.pid)))
+            for (left, right) in zip(lefts, rights) where left.id != right.id {
+                used.insert(left.id)
+                used.insert(right.id)
+                pairs.append(Pair(left: Member(id: left.id, pid: left.pid), right: Member(id: right.id, pid: right.pid)))
+            }
         }
 
         return pairs
@@ -171,7 +174,10 @@ enum SnapGroups {
         }
         compositeLock.unlock()
 
-        guard let image = compositeImage(left: left.image, right: right.image) else { return nil }
+        guard let image = compositeImage(
+            left: left.image, right: right.image,
+            leftIcon: cgIcon(left.app.icon), rightIcon: cgIcon(right.app.icon)
+        ) else { return nil }
 
         compositeLock.lock()
         if compositeCache.count > 16 {
@@ -182,9 +188,16 @@ enum SnapGroups {
         return image
     }
 
-    /// Both thumbnails side by side at a shared height with a small transparent gap.
+    private static func cgIcon(_ image: NSImage?) -> CGImage? {
+        guard let image else { return nil }
+        var rect = CGRect(origin: .zero, size: image.size)
+        return image.cgImage(forProposedRect: &rect, context: nil, hints: nil)
+    }
+
+    /// Both thumbnails side by side at a shared height with a small transparent gap, each
+    /// badged with its app icon at the bottom so the pair reads at a glance, like Windows 11.
     /// A missing thumbnail is drawn as a neutral placeholder shaped like half a screen.
-    static func compositeImage(left: CGImage?, right: CGImage?) -> CGImage? {
+    static func compositeImage(left: CGImage?, right: CGImage?, leftIcon: CGImage? = nil, rightIcon: CGImage? = nil) -> CGImage? {
         guard left != nil || right != nil else { return nil }
         let height = min(max(left?.height ?? 0, right?.height ?? 0), maxCompositeHeight)
         guard height > 0 else { return nil }
@@ -219,8 +232,27 @@ enum SnapGroups {
             }
         }
 
-        draw(left, in: CGRect(x: 0, y: 0, width: leftWidth, height: height))
-        draw(right, in: CGRect(x: leftWidth + gap, y: 0, width: rightWidth, height: height))
+        let leftRect = CGRect(x: 0, y: 0, width: leftWidth, height: height)
+        let rightRect = CGRect(x: leftWidth + gap, y: 0, width: rightWidth, height: height)
+        draw(left, in: leftRect)
+        draw(right, in: rightRect)
+
+        let iconSize = min(CGFloat(height) * 0.18, 160)
+        func badge(_ icon: CGImage?, in half: CGRect) {
+            guard let icon else { return }
+            let rect = CGRect(
+                x: half.midX - iconSize / 2,
+                y: iconSize * 0.35,
+                width: iconSize,
+                height: iconSize
+            )
+            context.saveGState()
+            context.setShadow(offset: CGSize(width: 0, height: -iconSize * 0.06), blur: iconSize * 0.25, color: CGColor(gray: 0, alpha: 0.55))
+            context.draw(icon, in: rect)
+            context.restoreGState()
+        }
+        badge(leftIcon, in: leftRect)
+        badge(rightIcon, in: rightRect)
         return context.makeImage()
     }
 }

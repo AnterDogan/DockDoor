@@ -40,7 +40,10 @@ struct WindowPreviewCompact: View, Equatable {
     }
 
     private var appName: String {
-        windowInfo.app.localizedName ?? "Unknown"
+        if windowInfo.isSnapGroup, let name = windowInfo.windowName, !name.isEmpty {
+            return name
+        }
+        return windowInfo.app.localizedName ?? "Unknown"
     }
 
     private var windowTitle: String? {
@@ -84,8 +87,19 @@ struct WindowPreviewCompact: View, Equatable {
 
     var body: some View {
         HStack(spacing: 10) {
-            // App icon
-            if let appIcon = windowInfo.app.icon {
+            // App icon (both members for a snap group)
+            if windowInfo.isSnapGroup {
+                HStack(spacing: 2) {
+                    ForEach(Array(windowInfo.snapGroupMembers.enumerated()), id: \.offset) { _, member in
+                        if let icon = member.app.icon {
+                            Image(nsImage: icon)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: appearance.compactModeItemSize.iconSize, height: appearance.compactModeItemSize.iconSize)
+                        }
+                    }
+                }
+            } else if let appIcon = windowInfo.app.icon {
                 Image(nsImage: appIcon)
                     .resizable()
                     .scaledToFit()

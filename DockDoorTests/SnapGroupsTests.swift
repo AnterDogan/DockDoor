@@ -53,7 +53,7 @@ struct SnapGroupsTests {
         #expect(pairs.isEmpty)
     }
 
-    @Test func picksFrontmostWindowPerHalf() {
+    @Test func pairsStackedWindowsByZOrderRank() {
         let pairs = SnapGroups.pairs(in: [
             candidate(10, leftHalf),
             candidate(11, leftHalf),
@@ -61,8 +61,19 @@ struct SnapGroupsTests {
             candidate(21, rightHalf),
         ], screens: [screen])
 
-        #expect(pairs.map(\.left.id) == [10])
-        #expect(pairs.map(\.right.id) == [20])
+        #expect(pairs.map(\.left.id) == [10, 11])
+        #expect(pairs.map(\.right.id) == [20, 21])
+    }
+
+    @Test func leavesUnmatchedExtraWindowAlone() {
+        let pairs = SnapGroups.pairs(in: [
+            candidate(10, leftHalf),
+            candidate(11, leftHalf),
+            candidate(20, rightHalf),
+        ], screens: [screen])
+
+        #expect(pairs.count == 1)
+        #expect(pairs[0].left.id == 10)
     }
 
     @Test func pairsPerScreen() {

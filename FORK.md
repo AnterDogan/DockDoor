@@ -48,6 +48,16 @@ git fetch upstream
 git rebase upstream/main
 ```
 
+## Darstellung
+
+- Gruppenkachel: beide Fenster nebeneinander, jedes mit seinem App-Icon als
+  Badge unten (im Composite gezeichnet, gilt in jeder Ansicht). Kopfzeile im
+  Switcher und in der Kompaktansicht zeigt beide Icons und "App A + App B".
+- Mehrere gestapelte Paare pro Bildschirm bilden je eine Gruppe (Paarung nach
+  Z-Reihenfolge: vorderstes linkes mit vorderstem rechten Fenster usw.).
+- Blasse Vorschauen kommen von DockDoors "unselected content opacity" (Standard
+  0,75); auf diesem Mac auf 1,0 gesetzt (Einstellungen → Appearance).
+
 ## Offen
 
 - Verhalten mit "Tiled windows have margins" (macOS-Rand): Fenster sind dann
