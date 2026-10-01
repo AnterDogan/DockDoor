@@ -571,9 +571,15 @@ struct WindowPreview: View, Equatable {
 
         let titleAndSubtitleContent = VStack(alignment: .leading, spacing: 0) {
             if !showAppIconOnly {
-                Text(headerName)
-                    .foregroundStyle(.primary)
-                    .lineLimit(1)
+                if windowInfo.isSnapGroup {
+                    // Group names are long (two titles), so they follow the title overflow setting.
+                    titleLabel(headerName)
+                        .foregroundStyle(.primary)
+                } else {
+                    Text(headerName)
+                        .foregroundStyle(.primary)
+                        .lineLimit(1)
+                }
             }
 
             if let windowTitle, hasWindowTitleLabel {
