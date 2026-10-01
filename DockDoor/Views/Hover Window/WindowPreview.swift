@@ -585,22 +585,40 @@ struct WindowPreview: View, Equatable {
         .padding(.trailing, 8)
 
         let appIconContent = Group {
-            if windowInfo.isSnapGroup {
-                HStack(spacing: 2) {
-                    ForEach(Array(windowInfo.snapGroupMembers.enumerated()), id: \.offset) { _, member in
-                        if let icon = member.app.icon {
-                            Image(nsImage: icon)
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: appIconSize, height: appIconSize)
-                        }
-                    }
-                }
-            } else if let appIcon = windowInfo.app.icon {
+            if let appIcon = windowInfo.app.icon {
                 Image(nsImage: appIcon)
                     .resizable()
                     .scaledToFit()
                     .frame(width: appIconSize, height: appIconSize)
+            }
+        }
+
+        func memberIcon(_ member: WindowInfo) -> some View {
+            Group {
+                if let icon = member.app.icon {
+                    Image(nsImage: icon)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: appIconSize, height: appIconSize)
+                }
+            }
+        }
+
+        // Snap group: the left member's icon sits at the left edge and the right member's at the
+        // right edge, mirroring where the windows are; the group name goes in between.
+        let headerContent = Group {
+            if windowInfo.isSnapGroup, windowInfo.snapGroupMembers.count == 2 {
+                HStack(spacing: 4) {
+                    memberIcon(windowInfo.snapGroupMembers[0])
+                    Spacer(minLength: 4)
+                    titleAndSubtitleContent
+                    Spacer(minLength: 4)
+                    memberIcon(windowInfo.snapGroupMembers[1])
+                }
+                .frame(maxWidth: .infinity)
+            } else {
+                appIconContent
+                titleAndSubtitleContent
             }
         }
 
@@ -638,8 +656,7 @@ struct WindowPreview: View, Equatable {
                     if appearance.controlPosition.isCentered {
                         Spacer(minLength: 0)
                         if shouldShowAppHeader {
-                            appIconContent
-                            titleAndSubtitleContent
+                            headerContent
                         }
                         if shouldShowControls { controlsContent }
                         Spacer(minLength: 0)
@@ -647,13 +664,11 @@ struct WindowPreview: View, Equatable {
                         if shouldShowControls { controlsContent }
                         Spacer(minLength: 8)
                         if shouldShowAppHeader {
-                            appIconContent
-                            titleAndSubtitleContent
+                            headerContent
                         }
                     } else {
                         if shouldShowAppHeader {
-                            appIconContent
-                            titleAndSubtitleContent
+                            headerContent
                         }
                         Spacer(minLength: 8)
                         if shouldShowControls { controlsContent }
